@@ -34,6 +34,6 @@ public class Task implements Comparable<Task>{
 	@Override
 	public int compareTo(Task o) {
 		Instant now = clock.instant();
-		return this.schedule.computeNextExecutionTime(now).compareTo(o.getSchedule().computeNextExecutionTime(now));
+		return this.schedule.getNextExecutionTime(now).compareTo(o.getSchedule().getNextExecutionTime(now));
 	}
 }

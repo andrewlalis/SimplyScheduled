@@ -20,7 +20,7 @@ public class MinutelySchedule implements Schedule {
 	}
 
 	@Override
-	public Instant computeNextExecutionTime(Instant referenceInstant) {
+	public Instant getNextExecutionTime(Instant referenceInstant) {
 		ZonedDateTime currentTime = referenceInstant.atZone(this.zoneId);
 		int currentSecond = currentTime.getSecond();
 		if (currentSecond >= this.second) {

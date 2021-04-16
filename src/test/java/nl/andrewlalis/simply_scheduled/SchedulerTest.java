@@ -31,7 +31,7 @@ public class SchedulerTest {
 		scheduler.addTask(task);
 		scheduler.start();
 		System.out.println("Now: " + clock.instant().toString());
-		System.out.println("Next task execution: " + task.getSchedule().computeNextExecutionTime(clock.instant()));
+		System.out.println("Next task execution: " + task.getSchedule().getNextExecutionTime(clock.instant()));
 		System.out.printf("Waiting %d seconds for task to run...", secondsLeft);
 		assertFalse(flag.get());
 		try {

@@ -14,14 +14,18 @@ public interface Schedule {
 	 * produce an instant sometime in the future at which the next execution of
 	 * a task should happen.
 	 *
-	 * <p>
-	 *     <strong>Note that certain implementations may introduce side-effects
-	 *     when this method is called more than once.</strong>
-	 * </p>
-	 *
 	 * @param referenceInstant The instant representing the current time.
 	 * @return An instant in the future indicating the next time at which a task
 	 * using this schedule should be executed.
 	 */
-	Instant computeNextExecutionTime(Instant referenceInstant);
+	Instant getNextExecutionTime(Instant referenceInstant);
+
+	/**
+	 * This method is called on the schedule as an indication that the scheduler
+	 * should move on to planning the next execution time.
+	 * @param instant The instant at which the schedule's task(s) were executed.
+	 */
+	default void markExecuted(Instant instant) {
+		// Default no-op.
+	}
 }

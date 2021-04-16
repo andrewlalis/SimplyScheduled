@@ -30,12 +30,15 @@ public class RepeatingSchedule implements Schedule {
 	 * @return The next instant to execute the task at.
 	 */
 	@Override
-	public Instant computeNextExecutionTime(Instant referenceInstant) {
+	public Instant getNextExecutionTime(Instant referenceInstant) {
 		if (this.lastExecution == null) {
 			this.lastExecution = referenceInstant;
 		}
-		Instant nextExecution = this.lastExecution.plus(multiple, unit);
-		this.lastExecution = nextExecution;
-		return nextExecution;
+		return this.lastExecution.plus(multiple, unit);
+	}
+
+	@Override
+	public void markExecuted(Instant instant) {
+		this.lastExecution = instant;
 	}
 }

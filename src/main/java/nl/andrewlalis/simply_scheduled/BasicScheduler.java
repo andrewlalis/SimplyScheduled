@@ -40,11 +40,12 @@ public class BasicScheduler extends Thread implements Scheduler {
 			try {
 				Task nextTask = this.tasks.take();
 				Instant now = this.clock.instant();
-				long waitTime = nextTask.getSchedule().computeNextExecutionTime(now).toEpochMilli() - now.toEpochMilli();
+				long waitTime = nextTask.getSchedule().getNextExecutionTime(now).toEpochMilli() - now.toEpochMilli();
 				if (waitTime > 0) {
 					Thread.sleep(waitTime);
 				}
 				this.executorService.execute(nextTask.getRunnable());
+				nextTask.getSchedule().markExecuted(this.clock.instant());
 				this.tasks.put(nextTask); // Put the task back in the queue.
 			} catch (InterruptedException e) {
 				this.setRunning(false);
