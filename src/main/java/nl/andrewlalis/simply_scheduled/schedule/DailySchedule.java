@@ -16,7 +16,7 @@ public class DailySchedule implements Schedule {
 	}
 
 	@Override
-	public Instant getNextExecutionTime(Instant referenceInstant) {
+	public Instant computeNextExecutionTime(Instant referenceInstant) {
 		ZonedDateTime currentTime = referenceInstant.atZone(this.zoneId);
 		LocalDate currentDay = LocalDate.from(referenceInstant);
 		ZonedDateTime sameDayExecution = currentDay.atTime(this.time).atZone(this.zoneId);

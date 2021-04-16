@@ -22,7 +22,7 @@ public class HourlySchedule implements Schedule {
 	}
 
 	@Override
-	public Instant getNextExecutionTime(Instant referenceInstant) {
+	public Instant computeNextExecutionTime(Instant referenceInstant) {
 		ZonedDateTime currentTime = referenceInstant.atZone(this.zoneId);
 		int currentMinute = currentTime.getMinute();
 		if (currentMinute < this.minute) {
