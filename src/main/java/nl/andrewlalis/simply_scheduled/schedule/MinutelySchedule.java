@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 public class MinutelySchedule implements Schedule {
 
@@ -20,12 +21,12 @@ public class MinutelySchedule implements Schedule {
 	}
 
 	@Override
-	public Instant getNextExecutionTime(Instant referenceInstant) {
+	public Optional<Instant> getNextExecutionTime(Instant referenceInstant) {
 		ZonedDateTime currentTime = referenceInstant.atZone(this.zoneId);
 		int currentSecond = currentTime.getSecond();
 		if (currentSecond >= this.second) {
-			return currentTime.plusMinutes(1).withSecond(this.second).truncatedTo(ChronoUnit.SECONDS).toInstant();
+			return Optional.of(currentTime.plusMinutes(1).withSecond(this.second).truncatedTo(ChronoUnit.SECONDS).toInstant());
 		}
-		return currentTime.withSecond(this.second).truncatedTo(ChronoUnit.SECONDS).toInstant();
+		return Optional.of(currentTime.withSecond(this.second).truncatedTo(ChronoUnit.SECONDS).toInstant());
 	}
 }

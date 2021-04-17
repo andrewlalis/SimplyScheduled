@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 /**
  * An hourly schedule is used to execute a task once per hour, at a specific
@@ -26,12 +27,12 @@ public class HourlySchedule implements Schedule {
 	}
 
 	@Override
-	public Instant getNextExecutionTime(Instant referenceInstant) {
+	public Optional<Instant> getNextExecutionTime(Instant referenceInstant) {
 		ZonedDateTime currentTime = referenceInstant.atZone(this.zoneId);
 		int currentMinute = currentTime.getMinute();
 		if (currentMinute < this.minute) {
-			return currentTime.truncatedTo(ChronoUnit.MINUTES).plusMinutes(this.minute - currentMinute).toInstant();
+			return Optional.of(currentTime.truncatedTo(ChronoUnit.MINUTES).plusMinutes(this.minute - currentMinute).toInstant());
 		}
-		return currentTime.plusHours(1).plusMinutes(this.minute).truncatedTo(ChronoUnit.MINUTES).toInstant();
+		return Optional.of(currentTime.plusHours(1).plusMinutes(this.minute).truncatedTo(ChronoUnit.MINUTES).toInstant());
 	}
 }

@@ -1,6 +1,7 @@
 package nl.andrewlalis.simply_scheduled.schedule;
 
 import java.time.*;
+import java.util.Optional;
 
 /**
  * A daily schedule plans for the execution of a task once per day, at a
@@ -20,13 +21,13 @@ public class DailySchedule implements Schedule {
 	}
 
 	@Override
-	public Instant getNextExecutionTime(Instant referenceInstant) {
+	public Optional<Instant> getNextExecutionTime(Instant referenceInstant) {
 		ZonedDateTime currentTime = referenceInstant.atZone(this.zoneId);
 		LocalDate currentDay = LocalDate.from(referenceInstant);
 		ZonedDateTime sameDayExecution = currentDay.atTime(this.time).atZone(this.zoneId);
 		if (sameDayExecution.isBefore(currentTime)) {
-			return sameDayExecution.toInstant();
+			return Optional.of(sameDayExecution.toInstant());
 		}
-		return sameDayExecution.plusDays(1).toInstant();
+		return Optional.of(sameDayExecution.plusDays(1).toInstant());
 	}
 }

@@ -3,6 +3,7 @@ package nl.andrewlalis.simply_scheduled.schedule;
 import nl.andrewlalis.simply_scheduled.Scheduler;
 
 import java.time.Instant;
+import java.util.Optional;
 
 /**
  * A schedule is used by a {@link Scheduler} to determine how long to wait for
@@ -16,9 +17,10 @@ public interface Schedule {
 	 *
 	 * @param referenceInstant The instant representing the current time.
 	 * @return An instant in the future indicating the next time at which a task
-	 * using this schedule should be executed.
+	 * using this schedule should be executed. If the optional is empty, it
+	 * indicates that there are no planned execution times.
 	 */
-	Instant getNextExecutionTime(Instant referenceInstant);
+	Optional<Instant> getNextExecutionTime(Instant referenceInstant);
 
 	/**
 	 * This method is called on the schedule as an indication that the scheduler
@@ -27,5 +29,14 @@ public interface Schedule {
 	 */
 	default void markExecuted(Instant instant) {
 		// Default no-op.
+	}
+
+	/**
+	 * Tells whether tasks executed in accordance with this schedule should be
+	 * re-queued again for another execution. Defaults to <code>true</code>.
+	 * @return True if this schedule is repeating, or false otherwise.
+	 */
+	default boolean isRepeating() {
+		return true;
 	}
 }

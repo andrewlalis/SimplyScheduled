@@ -2,6 +2,7 @@ package nl.andrewlalis.simply_scheduled.schedule;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 /**
  * A schedule which repeatedly executes a task at a regular interval specified
@@ -30,11 +31,11 @@ public class RepeatingSchedule implements Schedule {
 	 * @return The next instant to execute the task at.
 	 */
 	@Override
-	public Instant getNextExecutionTime(Instant referenceInstant) {
+	public Optional<Instant> getNextExecutionTime(Instant referenceInstant) {
 		if (this.lastExecution == null) {
 			this.lastExecution = referenceInstant;
 		}
-		return this.lastExecution.plus(multiple, unit);
+		return Optional.of(this.lastExecution.plus(multiple, unit));
 	}
 
 	@Override

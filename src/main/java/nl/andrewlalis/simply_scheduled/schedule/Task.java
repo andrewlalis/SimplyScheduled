@@ -2,6 +2,7 @@ package nl.andrewlalis.simply_scheduled.schedule;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.util.Optional;
 
 /**
  * A task consists of a runnable job, and a schedule that defines precisely when
@@ -19,8 +20,8 @@ public class Task implements Comparable<Task>{
 		this.schedule = schedule;
 	}
 
-	public Task(Runnable runnable, Schedule schedule) {
-		this(Clock.systemDefaultZone(), runnable, schedule);
+	public static Task of(Runnable runnable, Schedule schedule) {
+		return new Task(Clock.systemDefaultZone(), runnable, schedule);
 	}
 
 	public Runnable getRunnable() {
@@ -34,6 +35,13 @@ public class Task implements Comparable<Task>{
 	@Override
 	public int compareTo(Task o) {
 		Instant now = clock.instant();
-		return this.schedule.getNextExecutionTime(now).compareTo(o.getSchedule().getNextExecutionTime(now));
+		Optional<Instant> t1 = this.schedule.getNextExecutionTime(now);
+		Optional<Instant> t2 = o.getSchedule().getNextExecutionTime(now);
+
+		if (t1.isEmpty() && t2.isEmpty()) return 0;
+		if (t1.isPresent() && t2.isEmpty()) return 1;
+		if (t1.isEmpty()) return -1;
+
+		return t1.get().compareTo(t2.get());
 	}
 }

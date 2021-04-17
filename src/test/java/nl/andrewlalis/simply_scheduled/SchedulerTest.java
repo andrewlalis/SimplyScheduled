@@ -10,6 +10,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -20,7 +21,7 @@ public class SchedulerTest {
 	@Test
 	void testSchedule() {
 		Clock clock = Clock.fixed(Instant.now().truncatedTo(ChronoUnit.MINUTES), ZoneOffset.UTC);
-		Scheduler scheduler = new BasicScheduler(clock);
+		Scheduler scheduler = new BasicScheduler(clock, Executors.newSingleThreadExecutor());
 		int secondsLeft = 4;
 		AtomicBoolean flag = new AtomicBoolean(false);
 		Runnable taskRunnable = () -> {
@@ -45,15 +46,14 @@ public class SchedulerTest {
 
 	@Test
 	void testRepeatingSchedule() {
-		Scheduler scheduler = new BasicScheduler();
+		Scheduler scheduler = new BasicScheduler(Clock.systemUTC(), Executors.newWorkStealingPool());
 		Schedule schedule = new RepeatingSchedule(ChronoUnit.SECONDS, 1);
 		AtomicInteger value = new AtomicInteger(0);
 		Runnable taskRunnable = () -> {
 			value.set(value.get() + 1);
 			System.out.println("\tExecuted task.");
 		};
-		Task task = new Task(taskRunnable, schedule);
-		scheduler.addTask(task);
+		scheduler.addTask(Task.of(taskRunnable, schedule));
 		assertEquals(0, value.get());
 		scheduler.start();
 		System.out.println("Waiting 3.5 seconds for 3 iterations.");

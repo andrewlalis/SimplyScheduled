@@ -4,6 +4,7 @@ import nl.andrewlalis.simply_scheduled.schedule.Task;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.PriorityBlockingQueue;
@@ -18,18 +19,26 @@ public class BasicScheduler extends Thread implements Scheduler {
 	private final ExecutorService executorService;
 	private boolean running = false;
 
-	public BasicScheduler(Clock clock) {
+	public BasicScheduler(Clock clock, ExecutorService executorService) {
 		this.clock = clock;
 		this.tasks = new PriorityBlockingQueue<>();
-		this.executorService = Executors.newWorkStealingPool();
+		this.executorService = executorService;
 	}
 
 	public BasicScheduler() {
-		this(Clock.systemDefaultZone());
+		this(Clock.systemDefaultZone(), Executors.newWorkStealingPool());
 	}
 
+	/**
+	 * Adds a task to this scheduler's queue.
+	 * @param task The task to add.
+	 * @throws RuntimeException If a task is added while the scheduler is running.
+	 */
 	@Override
 	public void addTask(Task task) {
+		if (this.running) {
+			throw new RuntimeException("Cannot add tasks to the basic scheduler while it is running.");
+		}
 		this.tasks.add(task);
 	}
 
@@ -40,13 +49,19 @@ public class BasicScheduler extends Thread implements Scheduler {
 			try {
 				Task nextTask = this.tasks.take();
 				Instant now = this.clock.instant();
-				long waitTime = nextTask.getSchedule().getNextExecutionTime(now).toEpochMilli() - now.toEpochMilli();
+				Optional<Instant> optionalNextExecution = nextTask.getSchedule().getNextExecutionTime(now);
+				if (optionalNextExecution.isEmpty()) {
+					continue; // Skip if the schedule doesn't have a next execution planned.
+				}
+				long waitTime = optionalNextExecution.get().toEpochMilli() - now.toEpochMilli();
 				if (waitTime > 0) {
 					Thread.sleep(waitTime);
 				}
 				this.executorService.execute(nextTask.getRunnable());
 				nextTask.getSchedule().markExecuted(this.clock.instant());
-				this.tasks.put(nextTask); // Put the task back in the queue.
+				if (nextTask.getSchedule().isRepeating()) {
+					this.tasks.put(nextTask); // Put the task back in the queue.
+				}
 			} catch (InterruptedException e) {
 				this.setRunning(false);
 			}
