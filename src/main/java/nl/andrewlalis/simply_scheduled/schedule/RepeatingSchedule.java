@@ -11,17 +11,29 @@ import java.util.Optional;
 public class RepeatingSchedule implements Schedule {
 	private final ChronoUnit unit;
 	private final long multiple;
-	private Instant lastExecution;
+	private long elapsedIntervals = 0;
+	private final Instant start;
 
 	/**
 	 * Constructs a new repeating schedule.
 	 * @param unit The unit of time that the interval consists of.
-	 * @param multiple The
+	 * @param multiple The number of units of time that each interval consists of.
+	 * @param start The starting point for this schedule.
 	 */
-	public RepeatingSchedule(ChronoUnit unit, long multiple) {
+	public RepeatingSchedule(ChronoUnit unit, long multiple, Instant start) {
 		this.unit = unit;
 		this.multiple = multiple;
-		this.lastExecution = null;
+		this.start = start;
+	}
+
+	/**
+	 * Constructs a new repeating schedule, using {@link Instant#now()} as the
+	 * starting point.
+	 * @param unit The unit of time that the interval consists of.
+	 * @param multiple The number of units of time that each interval consists of.
+	 */
+	public RepeatingSchedule(ChronoUnit unit, long multiple) {
+		this(unit, multiple, Instant.now());
 	}
 
 	/**
@@ -32,14 +44,11 @@ public class RepeatingSchedule implements Schedule {
 	 */
 	@Override
 	public Optional<Instant> getNextExecutionTime(Instant referenceInstant) {
-		if (this.lastExecution == null) {
-			this.lastExecution = referenceInstant;
-		}
-		return Optional.of(this.lastExecution.plus(multiple, unit));
+		return Optional.of(this.start.plus(elapsedIntervals * multiple, unit));
 	}
 
 	@Override
 	public void markExecuted(Instant instant) {
-		this.lastExecution = instant;
+		this.elapsedIntervals++;
 	}
 }

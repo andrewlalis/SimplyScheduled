@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
 
 /**
  * A simple thread-based scheduler that sleeps until the next task, runs it
@@ -47,9 +48,9 @@ public class BasicScheduler extends Thread implements Scheduler {
 		this.running = true;
 		while (this.running) {
 			try {
-				Task nextTask = this.tasks.take();
-				Instant now = this.clock.instant();
-				Optional<Instant> optionalNextExecution = nextTask.getSchedule().getNextExecutionTime(now);
+				final Task nextTask = this.tasks.take();
+				final Instant now = this.clock.instant();
+				final Optional<Instant> optionalNextExecution = nextTask.getSchedule().getNextExecutionTime(now);
 				if (optionalNextExecution.isEmpty()) {
 					continue; // Skip if the schedule doesn't have a next execution planned.
 				}
@@ -57,10 +58,18 @@ public class BasicScheduler extends Thread implements Scheduler {
 				if (waitTime > 0) {
 					Thread.sleep(waitTime);
 				}
-				this.executorService.execute(nextTask.getRunnable());
+				try {
+					this.executorService.execute(nextTask.getRunnable());
+				} catch (RejectedExecutionException e) {
+					if (!this.executorService.isShutdown()) {
+						// Only show the stack trace if the executor service is not being shut down.
+						// We expect the service to reject executions if it is shutting down.
+						e.printStackTrace();
+					}
+				}
 				nextTask.getSchedule().markExecuted(this.clock.instant());
 				if (nextTask.getSchedule().isRepeating()) {
-					this.tasks.put(nextTask); // Put the task back in the queue.
+					this.tasks.put(nextTask);
 				}
 			} catch (InterruptedException e) {
 				this.setRunning(false);

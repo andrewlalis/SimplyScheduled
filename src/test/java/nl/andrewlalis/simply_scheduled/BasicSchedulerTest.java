@@ -1,6 +1,5 @@
 package nl.andrewlalis.simply_scheduled;
 
-import nl.andrewlalis.simply_scheduled.schedule.MinutelySchedule;
 import nl.andrewlalis.simply_scheduled.schedule.RepeatingSchedule;
 import nl.andrewlalis.simply_scheduled.schedule.Schedule;
 import nl.andrewlalis.simply_scheduled.schedule.Task;
@@ -8,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.Executors;
@@ -16,7 +16,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SchedulerTest {
+/**
+ * Tests the functionality of the {@link BasicScheduler} to reliably execute
+ * scheduled tasks.
+ */
+public class BasicSchedulerTest {
 
 	@Test
 	void testSchedule() {
@@ -28,7 +32,7 @@ public class SchedulerTest {
 			flag.set(true);
 			System.out.println("\tExecuted task.");
 		};
-		Task task = new Task(clock, taskRunnable, new MinutelySchedule(3));
+		Task task = new Task(clock, taskRunnable, new RepeatingSchedule(ChronoUnit.SECONDS, 2, clock.instant().plusSeconds(1)));
 		scheduler.addTask(task);
 		scheduler.start();
 		System.out.println("Now: " + clock.instant().toString());
@@ -45,24 +49,24 @@ public class SchedulerTest {
 	}
 
 	@Test
-	void testRepeatingSchedule() {
-		Scheduler scheduler = new BasicScheduler(Clock.systemUTC(), Executors.newWorkStealingPool());
-		Schedule schedule = new RepeatingSchedule(ChronoUnit.SECONDS, 1);
+	void testRepeatingSchedule() throws InterruptedException {
+		Scheduler scheduler = new BasicScheduler(Clock.systemUTC(), Executors.newFixedThreadPool(3));
+		Instant startInstant = Instant.now(Clock.systemUTC());
+		Schedule schedule = new RepeatingSchedule(ChronoUnit.SECONDS, 1, startInstant);
 		AtomicInteger value = new AtomicInteger(0);
 		Runnable taskRunnable = () -> {
 			value.set(value.get() + 1);
-			System.out.println("\tExecuted task.");
+			System.out.println("\tExecuted task at " + LocalDateTime.now());
 		};
-		scheduler.addTask(Task.of(taskRunnable, schedule));
+		scheduler.addTask(new Task(taskRunnable, schedule));
 		assertEquals(0, value.get());
 		scheduler.start();
-		System.out.println("Waiting 3.5 seconds for 3 iterations.");
-		try {
-			Thread.sleep(3500);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		assertEquals(3, value.get());
+
+		Thread.sleep(3500);
+		// We expect the task to have run 4 times:
+		// at t=0, t=1, t=2, and t=3.
+		assertEquals(4, value.get());
+
 		scheduler.stop(true);
 	}
 }

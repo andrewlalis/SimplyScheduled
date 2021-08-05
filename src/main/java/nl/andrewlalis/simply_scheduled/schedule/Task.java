@@ -14,20 +14,40 @@ public class Task implements Comparable<Task>{
 	private final Runnable runnable;
 	private final Schedule schedule;
 
+	/**
+	 * Constructs a new task that will run the given runnable according to the
+	 * given schedule. Allows for specifying a {@link Clock}, this is mostly
+	 * useful for testing purposes.
+	 * @param clock The clock to use for time-sensitive operations.
+	 * @param runnable The code to run when the task is executed.
+	 * @param schedule The schedule which determines when the task is executed.
+	 */
 	public Task(Clock clock, Runnable runnable, Schedule schedule) {
 		this.clock = clock;
 		this.runnable = runnable;
 		this.schedule = schedule;
 	}
 
-	public static Task of(Runnable runnable, Schedule schedule) {
-		return new Task(Clock.systemDefaultZone(), runnable, schedule);
+	/**
+	 * Constructs a new task that will run the given runnable according to the
+	 * given schedule.
+	 * @param runnable The code to run when the task is executed.
+	 * @param schedule The schedule which determines when the task is executed.
+	 */
+	public Task(Runnable runnable, Schedule schedule) {
+		this(Clock.systemDefaultZone(), runnable, schedule);
 	}
 
+	/**
+	 * @return The runnable which will be executed when this task is scheduled.
+	 */
 	public Runnable getRunnable() {
 		return runnable;
 	}
 
+	/**
+	 * @return The schedule for this task.
+	 */
 	public Schedule getSchedule() {
 		return schedule;
 	}

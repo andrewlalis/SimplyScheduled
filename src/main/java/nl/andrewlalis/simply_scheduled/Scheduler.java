@@ -1,5 +1,6 @@
 package nl.andrewlalis.simply_scheduled;
 
+import nl.andrewlalis.simply_scheduled.schedule.Schedule;
 import nl.andrewlalis.simply_scheduled.schedule.Task;
 
 /**
@@ -15,6 +16,15 @@ public interface Scheduler {
 	void addTask(Task task);
 
 	/**
+	 * Adds a task to this scheduler.
+	 * @param runnable The code to run.
+	 * @param schedule The schedule that dictates when the code should run.
+	 */
+	default void addTask(Runnable runnable, Schedule schedule) {
+		addTask(new Task(runnable, schedule));
+	}
+
+	/**
 	 * Starts the scheduler. A scheduler should only execute tasks once it has
 	 * started, and it is up to the implementation to determine whether new
 	 * tasks may be added while the scheduler is running.
@@ -27,4 +37,11 @@ public interface Scheduler {
 	 *              any currently-executing tasks are immediately shutdown.
 	 */
 	void stop(boolean force);
+
+	/**
+	 * Stops the scheduler, and waits for any currently-executing tasks to finish.
+	 */
+	default void stop() {
+		stop(false);
+	}
 }
