@@ -1,8 +1,8 @@
-package nl.andrewlalis.simply_scheduled;
+package nl.andrewl.simply_scheduled;
 
-import nl.andrewlalis.simply_scheduled.schedule.RepeatingSchedule;
-import nl.andrewlalis.simply_scheduled.schedule.Schedule;
-import nl.andrewlalis.simply_scheduled.schedule.Task;
+import nl.andrewl.simply_scheduled.schedule.Task;
+import nl.andrewl.simply_scheduled.schedule.RepeatingSchedule;
+import nl.andrewl.simply_scheduled.schedule.Schedule;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;

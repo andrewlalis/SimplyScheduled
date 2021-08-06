@@ -1,4 +1,4 @@
-package nl.andrewlalis.simply_scheduled.schedule;
+package nl.andrewl.simply_scheduled.schedule;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;

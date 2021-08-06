@@ -1,6 +1,6 @@
-package nl.andrewlalis.simply_scheduled;
+package nl.andrewl.simply_scheduled;
 
-import nl.andrewlalis.simply_scheduled.schedule.Task;
+import nl.andrewl.simply_scheduled.schedule.Task;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -20,12 +20,22 @@ public class BasicScheduler extends Thread implements Scheduler {
 	private final ExecutorService executorService;
 	private boolean running = false;
 
+	/**
+	 * Constructs the scheduler using the given clock and executor service. This
+	 * constructor is most useful for test cases where a custom clock is used.
+	 * @param clock The clock to use.
+	 * @param executorService The executor service to use.
+	 */
 	public BasicScheduler(Clock clock, ExecutorService executorService) {
 		this.clock = clock;
 		this.tasks = new PriorityBlockingQueue<>();
 		this.executorService = executorService;
 	}
 
+	/**
+	 * Constructs the scheduler using the system's default clock, and a new
+	 * work-stealing thread pool.
+	 */
 	public BasicScheduler() {
 		this(Clock.systemDefaultZone(), Executors.newWorkStealingPool());
 	}

@@ -1,4 +1,4 @@
-package nl.andrewlalis.simply_scheduled.schedule;
+package nl.andrewl.simply_scheduled.schedule;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -52,6 +52,15 @@ public class Task implements Comparable<Task>{
 		return schedule;
 	}
 
+	/**
+	 * Compares this task to another. This imposes a natural ordering of tasks
+	 * according to their schedule's next planned execution time, such that
+	 * tasks are ordered starting with those with the nearest execution time, to
+	 * those whose execution time is further in the future.
+	 * @param o The task to compare to.
+	 * @return -1 if this task's next execution time is before the other task's,
+	 * 1 if this task's next execution time is after the other, and 0 otherwise.
+	 */
 	@Override
 	public int compareTo(Task o) {
 		Instant now = clock.instant();

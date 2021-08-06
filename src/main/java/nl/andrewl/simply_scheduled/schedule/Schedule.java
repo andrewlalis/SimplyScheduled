@@ -1,6 +1,6 @@
-package nl.andrewlalis.simply_scheduled.schedule;
+package nl.andrewl.simply_scheduled.schedule;
 
-import nl.andrewlalis.simply_scheduled.Scheduler;
+import nl.andrewl.simply_scheduled.Scheduler;
 
 import java.time.Instant;
 import java.util.Optional;

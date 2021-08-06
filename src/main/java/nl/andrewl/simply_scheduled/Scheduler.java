@@ -1,7 +1,7 @@
-package nl.andrewlalis.simply_scheduled;
+package nl.andrewl.simply_scheduled;
 
-import nl.andrewlalis.simply_scheduled.schedule.Schedule;
-import nl.andrewlalis.simply_scheduled.schedule.Task;
+import nl.andrewl.simply_scheduled.schedule.Task;
+import nl.andrewl.simply_scheduled.schedule.Schedule;
 
 /**
  * A scheduler is responsible for storing and executing tasks as defined by each

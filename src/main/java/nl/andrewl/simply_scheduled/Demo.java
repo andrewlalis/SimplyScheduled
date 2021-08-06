@@ -1,11 +1,14 @@
-package nl.andrewlalis.simply_scheduled;
+package nl.andrewl.simply_scheduled;
 
-import nl.andrewlalis.simply_scheduled.schedule.RepeatingSchedule;
-import nl.andrewlalis.simply_scheduled.schedule.Schedule;
+import nl.andrewl.simply_scheduled.schedule.RepeatingSchedule;
+import nl.andrewl.simply_scheduled.schedule.Schedule;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
+/**
+ * Simple demonstration of scheduling functionality.
+ */
 public class Demo {
 	public static void main(String[] args) {
 		Scheduler scheduler = new BasicScheduler();

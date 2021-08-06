@@ -1,6 +1,10 @@
+/**
+ * The SimplyScheduled module.
+ */
 module simply_scheduled {
-	exports nl.andrewlalis.simply_scheduled;
-	exports nl.andrewlalis.simply_scheduled.schedule;
+	exports nl.andrewl.simply_scheduled;
+	exports nl.andrewl.simply_scheduled.schedule;
 
-	opens nl.andrewlalis.simply_scheduled;
+	// Needed for JUnit testing.
+	opens nl.andrewl.simply_scheduled;
 }
